@@ -16,5 +16,17 @@
     "pull-through": "^1.0.18",
     "vdom-render-pull-stream": "^1.0.0",
     "virtual-dom": "^2.1.1"
-  }
+  },
+  "directories": {
+    "example": "example"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twilson63/palmetto.git"
+  },
+  "bugs": {
+    "url": "https://github.com/twilson63/palmetto/issues"
+  },
+  "homepage": "https://github.com/twilson63/palmetto#readme"
 }
