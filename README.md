@@ -74,10 +74,12 @@ off of pull-stream which is a minimal pipeable streaming library.
 Events are streamed to services which are bascially one or more through streams. Then once state is created it is piped to the virtual-dom which triggers a
 render of your components.
 
+```
 Events ------> Services --------> Components  ---------->|
 ^                                                        |
 |                                                        |
 |----------------<----------------------<----------------|
+```
 
 
 ** Services just have to be a through stream(s) for pull-stream. The simplest
