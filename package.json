@@ -1,0 +1,20 @@
+{
+  "name": "palmetto",
+  "version": "1.0.0",
+  "description": "native framework built on pull-stream and virtual-dom",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Tom",
+  "license": "ISC",
+  "dependencies": {
+    "hyperx": "^2.0.4",
+    "pull-notify": "^0.1.1",
+    "pull-stream": "^3.4.3",
+    "pull-through": "^1.0.18",
+    "vdom-render-pull-stream": "^1.0.0",
+    "virtual-dom": "^2.1.1"
+  }
+}
