@@ -40,7 +40,7 @@ module.exports = function (components, services, target) {
       if(state.href) window.history.pushState(null, '', state.href)
       // generate dom
       return render(state)
-    }, document.body)
+    }, target)
   )
 
   // start app
