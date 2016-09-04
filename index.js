@@ -34,7 +34,7 @@ module.exports = function (components, services, target) {
     notify.listen(),
 
     services,
-
+    tap,
     domStream(function (state) {
       // update url
       if(state.href) window.history.pushState(null, '', state.href)

@@ -5,12 +5,17 @@ module.exports = notify => {
     if (e.srcElement.tagName === 'A') {
       if (e.srcElement.host === window.location.host) {
         e.preventDefault()
-        notify({
-          pathname: e.srcElement.pathname,
-          hash: e.srcElement.hash,
-          search: e.srcElement.search,
-          href: e.srcElement.href
-        })
+        var state = JSON.parse(window.localStorage.getItem('palmetto-state'))
+        state.leaving = true
+        notify(state)
+        setTimeout(_ =>
+          notify({
+            pathname: e.srcElement.pathname,
+            hash: e.srcElement.hash,
+            search: e.srcElement.search,
+            href: e.srcElement.href
+          })
+        , 1000)
       }
     }
   })

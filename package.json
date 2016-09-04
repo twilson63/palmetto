@@ -10,6 +10,7 @@
   "author": "Tom",
   "license": "ISC",
   "dependencies": {
+    "form-serialize": "^0.7.1",
     "hyperx": "^2.0.4",
     "pull-notify": "^0.1.1",
     "pull-stream": "^3.4.3",
