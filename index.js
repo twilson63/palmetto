@@ -9,7 +9,7 @@ var domStream = require('vdom-render-pull-stream')
 var pull = require('pull-stream/pull')
 
 var notify = Notify()
-
+var tap = require('./tap')
 
 module.exports = function (components, services, target) {
   if (!components) {
