@@ -5,7 +5,7 @@ module.exports = notify => {
     if (e.srcElement.tagName === 'A') {
       if (e.srcElement.host === window.location.host) {
         e.preventDefault()
-        var state = JSON.parse(window.localStorage.getItem('palmetto-state'))
+        var state = JSON.parse(window.sessionStorage.getItem('palmetto-state'))
         state.leaving = true
         notify(state)
         setTimeout(_ =>
