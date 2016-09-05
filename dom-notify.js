@@ -1,42 +1,54 @@
 var serialize = require('form-serialize')
 module.exports = notify => {
+  function transition(msg) {
+    var state = JSON.parse(window.sessionStorage.getItem('palmetto-state'))
+    state.leaving = true
+    notify(state)
+    setTimeout(_ => notify(msg), 500)
+  }
   // handle links
   window.addEventListener('click', e => {
-    // need to manage external links
-    if (e.srcElement.tagName === 'A') {
-      if (e.srcElement.host === window.location.host) {
-        e.preventDefault()
-        var state = JSON.parse(window.sessionStorage.getItem('palmetto-state'))
-        state.leaving = true
-        notify(state)
-        setTimeout(_ =>
-          notify({
-            pathname: e.srcElement.pathname,
-            hash: e.srcElement.hash,
-            search: e.srcElement.search,
-            href: e.srcElement.href
-          })
-        , 1000)
+    var node = e.srcElement
+    if (node.tagName !== 'A' || node.tagName !== 'BUTTON') {
+      if (node.parentNode.tagName === 'A') {
+        node = node.parentNode
       }
     }
+
+    if (node.tagName !== 'BUTTON') {
+      e.preventDefault()
+      transition({
+        pathname: node.pathname,
+        hash: node.hash,
+        search: node.search,
+        href: node.href
+      })
+    }
     // handle button clicks
-    if (e.srcElement.tagName === 'button') {
-      // handle button clicks
+    if (node.tagName === 'BUTTON' && node.form === null) {
       notify({
-        action: e.srcElement.id
+        action: node.id
       })
     }
   })
   // handle submit
   window.addEventListener('submit', e => {
+    var node = e.srcElement
     e.preventDefault()
-    notify({
-      action: e.srcElement.id,
-      data: serialize(e.srcElement, { hash: true })
+    transition({
+      action: node.id,
+      data: serialize(node, { hash: true })
     })
   })
 
   // handle popstate
-  window.addEventListener('popstate', notify)
+  window.addEventListener('popstate', e => {
+    transition({
+      pathname: window.location.pathname,
+      hash: window.location.hash,
+      search: window.location.search,
+      href: window.location.href
+    })
+  })
 
 }
