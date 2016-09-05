@@ -1,4 +1,4 @@
-var serialize = requrie('form-serialize')
+var serialize = require('form-serialize')
 module.exports = notify => {
   // handle links
   window.addEventListener('click', e => {
