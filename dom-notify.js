@@ -1,3 +1,4 @@
+var serialize = requrie('form-serialize')
 module.exports = notify => {
   // handle links
   window.addEventListener('click', e => {
@@ -18,6 +19,21 @@ module.exports = notify => {
         , 1000)
       }
     }
+    // handle button clicks
+    if (e.srcElement.tagName === 'button') {
+      // handle button clicks
+      notify({
+        action: e.srcElement.id
+      })
+    }
+  })
+  // handle submit
+  window.addEventListener('submit', e => {
+    e.preventDefault()
+    notify({
+      action: e.srcElement.id,
+      data: serialize(e.srcElement, { hash: true })
+    })
   })
 
   // handle popstate

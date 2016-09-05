@@ -20,6 +20,10 @@ app(
 )
 ```
 
+Palmetto will listen on the document for link clicks, button clicks and form submit events. Then will bundle them up into actions to be notified to the
+services pipeline. It is preferred to use hyperlinks to transition from one view to another. Then use buttons for internal interactions within the view and
+form submits to post data to your service.
+
 ## API
 
 The api is a function that takes a component(s), [service(s)], [target].
