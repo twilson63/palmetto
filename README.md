@@ -14,8 +14,9 @@ To simplify the building of native web applications
 var app = require('palmetto')
 
 app(
-  components,
+  selectors(a, button, form),
   services,
+  components,
   document.body
 )
 ```
@@ -79,7 +80,7 @@ Events are streamed to services which are bascially one or more through streams.
 render of your components.
 
 ```
-Events ------> Services --------> Components  ---------->|
+Selectors ------> Services --------> Components  ---------->|
 ^                                                        |
 |                                                        |
 |----------------<----------------------<----------------|

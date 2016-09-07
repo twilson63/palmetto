@@ -15,7 +15,7 @@ module.exports = notify => {
       }
     }
 
-    if (node.tagName !== 'BUTTON') {
+    if (node.tagName === 'A') {
       e.preventDefault()
       transition({
         pathname: node.pathname,
