@@ -49,6 +49,17 @@ app = module.exports = function (selectors, services, components, target) {
 
   // init selectors
   selectors(document, notify)
+  // handle popstate
+  window.addEventListener('popstate', e => {
+    e.preventDefault()
+    notify({
+      pathname: window.location.pathname,
+      hash: window.location.hash,
+      search: window.location.search,
+      href: window.location.href
+    })
+  })
+
   // start app
   notify(window.location)
 }
