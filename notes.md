@@ -45,6 +45,12 @@ app(
 
 selector signature:
 
+A selector takes a document object and notify object
+
+You can use the document.querySelector('')
+to capture events and then the notify function to
+emit events
+
 ```
 module.exports = function (document, notify) {
   document.querySelector('a')

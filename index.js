@@ -11,7 +11,13 @@ var pull = require('pull-stream/pull')
 var notify = Notify()
 var tap = require('./tap')
 
-module.exports = function (components, services, target) {
+var app
+
+app = module.exports = function (selectors, services, components, target) {
+  if (!selectors) {
+    throw new Error('selectos are requires')
+  }
+
   if (!components) {
     throw new Error('components is required!')
   }
@@ -25,9 +31,7 @@ module.exports = function (components, services, target) {
 
   if (!target) { target = document.body }
 
-  var domNotify = require('./dom-notify')(notify)
-
-  var render = components(hx, notify)
+  var render = components(hx)
 
   pull(
     // listen for events
@@ -43,6 +47,14 @@ module.exports = function (components, services, target) {
     }, target)
   )
 
+  // init selectors
+  selectors(document, notify)
   // start app
   notify(window.location)
+}
+
+app.selectors = function (...fns) {
+  return function (document, notify) {
+    fns.map(fn => fn.call(null, document, notify))
+  }
 }
