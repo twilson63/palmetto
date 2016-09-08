@@ -1,22 +1,34 @@
-var app = require('../')
+const app = require('../')
+// get common selectors to listen for events
+const { a, button, form } = require('../common-selectors')
 
-app(
-  function (hx, notify) {
-    
-    return function render (state) {
-      return hx`
-      <div>
-        <h1 onclick=${onclick}>${state.title || 'Hello World'}</h1>
-      </div>
-      `
-    }
+// app takes virtual dom components and selectors.
 
-    function onclick () {
-      notify({
-        pathname: '/',
-        href: '/',
-        title: 'Beep'
-      })
+app({
+  selectors: app.selectors(a, button, form),
+  components
+})
+
+// vdom component.
+function components (hx) {
+  return function render (state) {
+    var title = 'Hello World'
+    if (state.action === 'clicked') {
+      title = 'You Clicked  a Button'
     }
+    return hx`
+    <div>
+      <h1>${title}</h1>
+      <a href="/foo">Foo</a>
+      <a href="/bar">
+        <h1>Big Bar</h1>
+      </a>
+      <button id="clicked">Big Button</button>
+      <form id="foo">
+        <input name="bar">
+        <button>Save</button>
+      </form>
+    </div>
+    `
   }
-)
+}

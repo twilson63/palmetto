@@ -13,11 +13,7 @@ var tap = require('./tap')
 
 var app
 
-app = module.exports = function (selectors, services, components, target) {
-  if (!selectors) {
-    throw new Error('selectos are requires')
-  }
-
+app = module.exports = function ({selectors, services, components, target}) {
   if (!components) {
     throw new Error('components is required!')
   }
@@ -48,7 +44,7 @@ app = module.exports = function (selectors, services, components, target) {
   )
 
   // init selectors
-  selectors(document, notify)
+  if (selectors) { selectors(document, notify) }
   // handle popstate
   window.addEventListener('popstate', e => {
     e.preventDefault()

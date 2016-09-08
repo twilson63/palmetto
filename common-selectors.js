@@ -1,4 +1,6 @@
 const serialize = require('form-serialize')
+const most = require('most')
+const { or, prop, equals, ifElse, identity, compose, isNil } = require('ramda')
 
 module.exports = {
   a,
@@ -14,27 +16,51 @@ function transition(notify, msg) {
 }
 
 function a (document, notify) {
-  document.querySelector('a')
-    .addEventListener('click', function (e) {
-      e.preventDefault()
-      const node = e.target || e.srcElement
-      transition(notify, {
-        pathname: node.pathname,
-        hash: node.hash,
-        search: node.search,
-        href: node.href
-      })
+  const isA = compose(equals('A'), prop('tagName'))
+  const getAnchorNode = ifElse(isA, identity, prop('parentNode'))
+
+  most.fromEvent('click', document)
+    //.map(e => e.target || e.srcElement)
+    .filter(e => {
+      const node = or(prop('target', e), prop('srcElement', e))
+      return ~[node.tagName, node.parentNode.tagName].indexOf('A')
     })
+    .tap(e => e.preventDefault())
+    .map(e => or(prop('target', e), prop('srcElement', e)))
+    .map(getAnchorNode)
+    .debounce(200)
+    .observe(a => transition(notify, {
+      pathname: a.pathname,
+      hash: a.hash,
+      search: a.search,
+      href: a.href
+    }))
+
+}
+
+function button (document, notify) {
+  most.fromEvent('click', document)
+    .filter(e => {
+      const node = or(prop('target', e), prop('srcElement', e))
+      return ~[node.tagName, node.parentNode.tagName].indexOf('BUTTON')
+    })
+    .map(e => or(prop('target', e), prop('srcElement', e)))
+    .filter(compose(isNil, prop('form')))
+    .debounce(200)
+    .observe(button => transition(notify, {
+      action: button.id
+    }))
+
 }
 
 function form (document, notify) {
-  document.querySelector('form')
-    .addEventListener('submit', function (e) {
-      e.preventDefault()
-      const node = e.target || e.srcElement
-      transition({
-        action: node.id,
-        data: serialize(node, { hash: true })
-      })
-    })
+  most.fromEvent('submit', document)
+    .tap(e => e.preventDefault())
+    .map(e => or(prop('target', e), prop('srcElement', e)))
+    .debounce(200)
+    .observe(form => transition(notify, {
+      action: form.id,
+      data: serialize(form, { hash: true })
+    }))
+
 }
