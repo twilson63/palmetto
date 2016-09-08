@@ -12,28 +12,92 @@ To simplify the building of native web applications
 
 ```
 var app = require('palmetto')
-
-app(
-  selectors(a, button, form),
+var {a, button, form} = require('palmetto/common-selectors')
+app({
+  selectors: app.selectors(a, button, form),
   services,
   components,
   document.body
-)
+})
 ```
-
-Palmetto will listen on the document for link clicks, button clicks and form submit events. Then will bundle them up into actions to be notified to the
-services pipeline. It is preferred to use hyperlinks to transition from one view to another. Then use buttons for internal interactions within the view and
-form submits to post data to your service.
 
 ## API
 
-The api is a function that takes a component(s), [service(s)], [target].
+The api is a function that takes an object that contains the following nodes:
 
-The components argument is a nested set of components with a basic signature.
+- selectors
+- services
+- components
+- target  
 
-The services optional argument is a `through` pull-stream.
+The `selectors` node takes a function that can have one to many selector functions.
 
-The target optional argument is a document element you want to apply your components to.
+```
+app({
+  selectors: app.selectors(fn1, fn2, fn3)
+})
+```
+
+A selector function is a function that has a document object and notify function
+as input and simply calls the notify function to dispatch actions.
+
+```
+module.exports = function (document, notify) {
+  document.querySelector('a#foo')
+    .addEventListener('click', function (e) {
+      e.preventDefault()
+      notify({action: 'foo'})
+    })
+}
+```
+
+Palmetto comes with common-selectors that you can choose to use to provide default
+notifications to your services and components.
+
+```
+var { a, button, form } = require('palmetto/common-selectors')
+var app = require('palmetto')
+
+app({
+  selectors: app.selectors(a, button, form)
+})
+```
+
+You also register your selectors using the `app.selectors` function
+
+---
+
+The `components` node is a higher order function that returns a
+function that takes a state argument and returns a virtualTree Node.
+
+```
+module.exports = function (hx) {
+  return function (state) {
+    return hx`<h1>Hello World</h1>`
+  }
+}
+```
+
+
+The `services` optional node is a `through` pull-stream.
+
+- pull-promise https://pull-stream.github.io/#pull-promise
+- async-map https://pull-stream.github.io/#async-map
+
+Are some service functions you may want to use.
+
+```
+const toPull = require('pull-promise')
+
+pull(
+  pull.values([2, 4, 8]),
+  toPull.through((v) => Promise.resolve(v * v)),
+  pull.log()
+)
+```
+
+
+The `target` optional node is a document element you want to apply your components to.
 
 > ** if you want to update the browser url with your notify events make sure you have a `href` node in your notify object
 >
