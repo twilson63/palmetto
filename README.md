@@ -155,6 +155,11 @@ Selectors ------> Services --------> Components  ---------->|
 through stream for pull-stream is pull-through
 
 ```
+
+## Developer Setup
+
+This setup is for developers who intend to fix bugs or add more features to palmetto. Use the src directory to make modifications to library then transpile to es5 using `npm run build`
+
 var through = require('pull-through')
 
 module.exports = through( function (data) {
