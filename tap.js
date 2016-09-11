@@ -1,7 +1,9 @@
-var through = require('pull-through')
+'use strict';
 
-module.exports = through( function (data) {
+var through = require('pull-through');
+
+module.exports = through(function (data) {
   // store current state
-  window.sessionStorage.setItem('palmetto-state', JSON.stringify(data))
-  this.queue(data)
-})
+  window.sessionStorage.setItem('palmetto-state', JSON.stringify(data));
+  this.queue(data);
+});

@@ -4,7 +4,8 @@
   "description": "native framework built on pull-stream and virtual-dom",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d ."
   },
   "keywords": [],
   "author": "Tom",
@@ -23,7 +24,10 @@
   "directories": {
     "example": "example"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/twilson63/palmetto.git"
