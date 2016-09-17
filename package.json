@@ -1,6 +1,6 @@
 {
   "name": "palmetto",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "native framework built on pull-stream and virtual-dom",
   "main": "index.js",
   "scripts": {
