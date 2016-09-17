@@ -1,4 +1,4 @@
-const {compose, values, pick, join } = require('ramda')
+const { concat, compose, values, pick, join } = require('ramda')
 
 const getValues = compose(
   values,

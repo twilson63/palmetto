@@ -2,6 +2,7 @@
 
 var _require = require('ramda');
 
+var concat = _require.concat;
 var compose = _require.compose;
 var values = _require.values;
 var pick = _require.pick;

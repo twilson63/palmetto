@@ -1,6 +1,8 @@
+var document = require('global/document')
 const serialize = require('form-serialize')
 const most = require('most')
 const { or, prop, equals, ifElse, identity, compose, isNil } = require('ramda')
+const toState = require('./to-state')
 
 module.exports = {
   a,
@@ -15,12 +17,11 @@ function transition(notify, msg) {
   setTimeout(_ => notify(msg), 500)
 }
 
-function a (document, notify) {
+function a (notify) {
   const isA = compose(equals('A'), prop('tagName'))
   const getAnchorNode = ifElse(isA, identity, prop('parentNode'))
 
   most.fromEvent('click', document)
-    //.map(e => e.target || e.srcElement)
     .filter(e => {
       const node = or(prop('target', e), prop('srcElement', e))
       return ~[node.tagName, node.parentNode.tagName].indexOf('A')
@@ -29,16 +30,11 @@ function a (document, notify) {
     .map(e => or(prop('target', e), prop('srcElement', e)))
     .map(getAnchorNode)
     .debounce(200)
-    .observe(a => transition(notify, {
-      pathname: a.pathname,
-      hash: a.hash,
-      search: a.search,
-      href: a.href
-    }))
+    .observe(a => transition(notify, toState(a)))
 
 }
 
-function button (document, notify) {
+function button (notify) {
   most.fromEvent('click', document)
     .filter(e => {
       const node = or(prop('target', e), prop('srcElement', e))
@@ -47,20 +43,23 @@ function button (document, notify) {
     .map(e => or(prop('target', e), prop('srcElement', e)))
     .filter(compose(isNil, prop('form')))
     .debounce(200)
-    .observe(button => transition(notify, {
-      action: button.id
+    .observe(button => notify({
+      type: button['data-type'] || 'button',
+      action: button['data-action'] || 'click',
+      id: button['data-id'] || null
     }))
-
 }
 
-function form (document, notify) {
+function form (notify) {
   most.fromEvent('submit', document)
     .tap(e => e.preventDefault())
     .map(e => or(prop('target', e), prop('srcElement', e)))
     .debounce(200)
     .observe(form => transition(notify, {
-      action: form.id,
-      data: serialize(form, { hash: true })
+      type: form['data-type'],
+      action: form['data-action'],
+      id: form['data-id'] || null,
+      properties: serialize(form, { hash: true })
     }))
 
 }

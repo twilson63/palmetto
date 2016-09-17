@@ -49,7 +49,7 @@ app = module.exports = function ({selectors, services, components, target}) {
   })
 
   // start app
-  notify(window.location)
+  notify(toState(window.location))
 }
 
 app.selectors = function (...fns) {

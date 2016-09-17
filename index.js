@@ -55,7 +55,7 @@ app = module.exports = function (_ref) {
   });
 
   // start app
-  notify(window.location);
+  notify(toState(window.location));
 };
 
 app.selectors = function () {

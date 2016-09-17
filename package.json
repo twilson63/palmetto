@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "form-serialize": "^0.7.1",
+    "global": "^4.3.0",
     "hyperx": "^2.0.4",
     "most": "^1.0.2",
     "pull-notify": "^0.1.1",
