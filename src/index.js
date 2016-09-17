@@ -1,6 +1,3 @@
-var h = require('virtual-dom/h')
-const hx = require('hyperx')(h)
-
 var through = require('pull-through')
 var Notify = require('pull-notify')
 
@@ -10,6 +7,8 @@ var pull = require('pull-stream/pull')
 
 var notify = Notify()
 var tap = require('./tap')
+var toState = require('./to-state')
+var toHref = require('./to-href')
 
 var app
 
@@ -27,8 +26,6 @@ app = module.exports = function ({selectors, services, components, target}) {
 
   if (!target) { target = document.body }
 
-  var render = components(hx)
-
   pull(
     // listen for events
     notify.listen(),
@@ -37,23 +34,18 @@ app = module.exports = function ({selectors, services, components, target}) {
     tap,
     domStream(function (state) {
       // update url
-      if(state.href) window.history.pushState(null, '', state.href)
+      window.history.pushState(null, '', toHref(state))
       // generate dom
-      return render(state)
+      return components(state)
     }, target)
   )
 
   // init selectors
-  if (selectors) { selectors(document, notify) }
+  if (selectors) { selectors(notify) }
   // handle popstate
   window.addEventListener('popstate', e => {
     e.preventDefault()
-    notify({
-      pathname: window.location.pathname,
-      hash: window.location.hash,
-      search: window.location.search,
-      href: window.location.href
-    })
+    notify(toState(window.location))
   })
 
   // start app
@@ -61,7 +53,6 @@ app = module.exports = function ({selectors, services, components, target}) {
 }
 
 app.selectors = function (...fns) {
-  return function (document, notify) {
-    fns.map(fn => fn.call(null, document, notify))
-  }
+  return notify => 
+    fns.map(fn => fn.call(null, notify))
 }

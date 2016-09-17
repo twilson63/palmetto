@@ -1,8 +1,5 @@
 'use strict';
 
-var h = require('virtual-dom/h');
-var hx = require('hyperx')(h);
-
 var through = require('pull-through');
 var Notify = require('pull-notify');
 
@@ -12,6 +9,8 @@ var pull = require('pull-stream/pull');
 
 var notify = Notify();
 var tap = require('./tap');
+var toState = require('./to-state');
+var toHref = require('./to-href');
 
 var app;
 
@@ -36,30 +35,23 @@ app = module.exports = function (_ref) {
     target = document.body;
   }
 
-  var render = components(hx);
-
   pull(
   // listen for events
   notify.listen(), services, tap, domStream(function (state) {
     // update url
-    if (state.href) window.history.pushState(null, '', state.href);
+    window.history.pushState(null, '', toHref(state));
     // generate dom
-    return render(state);
+    return components(state);
   }, target));
 
   // init selectors
   if (selectors) {
-    selectors(document, notify);
+    selectors(notify);
   }
   // handle popstate
   window.addEventListener('popstate', function (e) {
     e.preventDefault();
-    notify({
-      pathname: window.location.pathname,
-      hash: window.location.hash,
-      search: window.location.search,
-      href: window.location.href
-    });
+    notify(toState(window.location));
   });
 
   // start app
@@ -71,9 +63,9 @@ app.selectors = function () {
     fns[_key] = arguments[_key];
   }
 
-  return function (document, notify) {
-    fns.map(function (fn) {
-      return fn.call(null, document, notify);
+  return function (notify) {
+    return fns.map(function (fn) {
+      return fn.call(null, notify);
     });
   };
 };
