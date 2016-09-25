@@ -10,6 +10,8 @@ var tap = require('./tap')
 var toState = require('./to-state')
 var toHref = require('./to-href')
 
+var hx = require('./hx')
+
 var app
 
 app = module.exports = function ({selectors, services, components, target}) {
@@ -51,6 +53,8 @@ app = module.exports = function ({selectors, services, components, target}) {
   // start app
   notify(toState(window.location))
 }
+
+app.hx = hx
 
 app.selectors = function (...fns) {
   return notify => 
