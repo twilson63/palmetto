@@ -12,6 +12,8 @@ var tap = require('./tap');
 var toState = require('./to-state');
 var toHref = require('./to-href');
 
+var hx = require('./hx');
+
 var app;
 
 app = module.exports = function (_ref) {
@@ -57,6 +59,8 @@ app = module.exports = function (_ref) {
   // start app
   notify(toState(window.location));
 };
+
+app.hx = hx;
 
 app.selectors = function () {
   for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
