@@ -11,16 +11,9 @@
   "author": "Tom",
   "license": "ISC",
   "dependencies": {
-    "form-serialize": "^0.7.1",
-    "global": "^4.3.0",
+    "emitonoff": "0.0.8",
     "hyperx": "^2.0.4",
-    "most": "^1.0.2",
-    "pull-notify": "^0.1.1",
-    "pull-stream": "^3.4.3",
-    "pull-through": "^1.0.18",
-    "ramda": "^0.22.1",
-    "vdom-render-pull-stream": "^1.0.0",
-    "virtual-dom": "^2.1.1"
+    "morphdom": "^2.1.0"
   },
   "directories": {
     "example": "example"

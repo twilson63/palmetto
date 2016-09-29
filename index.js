@@ -1,75 +1,66 @@
 'use strict';
 
-var through = require('pull-through');
-var Notify = require('pull-notify');
+var update = require('morphdom');
+var emitter = require('emitonoff')();
 
-var domStream = require('vdom-render-pull-stream');
-
-var pull = require('pull-stream/pull');
-
-var notify = Notify();
-var tap = require('./tap');
-var toState = require('./to-state');
-var toHref = require('./to-href');
-
-var hx = require('./hx');
-
-var app;
-
-app = module.exports = function (_ref) {
-  var selectors = _ref.selectors;
+var app = module.exports = function (_ref) {
+  var events = _ref.events;
   var services = _ref.services;
   var components = _ref.components;
   var target = _ref.target;
 
-  if (!components) {
-    throw new Error('components is required!');
-  }
-
-  if (!services) {
-    services = through(function (data) {
-      console.log(data);
-      this.queue(data);
-    });
-  }
-
-  if (!target) {
-    target = document.body;
-  }
-
-  pull(
-  // listen for events
-  notify.listen(), services, tap, domStream(function (state) {
-    // update url
-    window.history.pushState(null, '', toHref(state));
-    // generate dom
-    return components(state);
-  }, target));
-
-  // init selectors
-  if (selectors) {
-    selectors(notify);
-  }
-  // handle popstate
-  window.addEventListener('popstate', function (e) {
-    e.preventDefault();
-    notify(toState(window.location));
+  target = target || document.body.querySelector('div');
+  // pass notify handler to events module
+  events(function (event) {
+    emitter.emit('event', event);
   });
 
-  // start app
-  notify(toState(window.location));
-};
+  // handle update events
+  emitter.on('update', function (node) {
+    // need to update dom
+    update(target, node);
+  });
 
-app.hx = hx;
+  // on event get state from services
+  var state = {};
+  emitter.on('event', function (event) {
+    services({ state: state, event: event }, function (err, newState) {
+      state = newState;
 
-app.selectors = function () {
-  for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
-    fns[_key] = arguments[_key];
-  }
+      if (err) {
+        console.log(err.message);
+        state = {
+          type: 'error',
+          data: { message: err.message }
+        };
+        emitter.emit('render', state);
+        return;
+      }
 
-  return function (notify) {
-    return fns.map(function (fn) {
-      return fn.call(null, notify);
+      emitter.emit('render', state);
     });
-  };
+  });
+
+  // on render event get node from components
+  emitter.on('render', function (state) {
+    // need to manage pushState
+    window.history.pushState(null, '', toHref(state));
+    emitter.emit('update', components(state));
+  });
 };
+
+function toHref(state) {
+  var result = [];
+  if (state.type) {
+    result.push(state.type);
+  }
+  if (state.action) {
+    result.push(state.action);
+  }
+  if (state.id) {
+    result.push(state.id);
+  }
+  return '/' + result.join('/');
+}
+
+app.hx = require('./hx');
